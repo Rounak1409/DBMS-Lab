@@ -144,13 +144,28 @@ def clear2():
     res = "1)Take Images  >>>  2)Save Profile"
     message1.configure(text=res)
 
+def clear3():
+    txt3.delete(0, 'end')
+    res = "1)Take Images  >>>  2)Save Profile"
+    message1.configure(text=res)
+
+def clear4():
+    txt4.delete(0, 'end')
+    res = "1)Take Images  >>>  2)Save Profile"
+    message1.configure(text=res)
+
+def clear5():
+    txt5.delete(0, 'end')
+    res = "1)Take Images  >>>  2)Save Profile"
+    message1.configure(text=res)
 #######################################################################################
 
 def TakeImages():
     check_haarcascadefile()
-    columns = ['SERIAL NO.', '', 'ID', '', 'NAME']
+    columns = ['SERIAL NO.', '', 'ID', '', 'NAME','','ADDRESS','','COLLEGE NAME','','BRANCH']
     assure_path_exists("StudentDetails/")
     assure_path_exists("TrainingImage/")
+    assure_path_exists("BranchDetails/")
     serial = 0
     exists = os.path.isfile("StudentDetails\StudentDetails.csv")
     if exists:
@@ -166,9 +181,31 @@ def TakeImages():
             writer.writerow(columns)
             serial = 1
         csvFile1.close()
+
+    columns = ['SERIAL NO.', '','BRANCH']
+    serial1=0
+    exists1 = os.path.isfile("BranchDetails\BranchDetails.csv")
+    if exists1:
+        with open("BranchDetails\BranchDetails.csv", 'r') as csvFile1:
+            reader1 = csv.reader(csvFile1)
+            for l in reader1:
+                serial1 = serial1 + 1
+        serial1 = (serial1 // 2)
+        csvFile1.close()
+    else:
+        with open("BranchDetails\BranchDetails.csv", 'a+') as csvFile1:
+            writer = csv.writer(csvFile1)
+            writer.writerow(columns)
+            serial1 = 1
+        csvFile1.close()
+
+
     Id = (txt.get())
     name = (txt2.get())
-    if ((name.isalpha()) or (' ' in name)):
+    address = (txt3.get())
+    college = (txt4.get())
+    branch = (txt5.get())
+    if (((name.isalpha()) or (' ' in name)) and ((address.isalpha()) or (' ' in address)) and ((college.isalpha()) or (' ' in college)) and ((branch.isalpha()) or (' ' in branch))):
         cam = cv2.VideoCapture(0)
         harcascadePath = "haarcascade_frontalface_default.xml"
         detector = cv2.CascadeClassifier(harcascadePath)
@@ -195,7 +232,28 @@ def TakeImages():
         cam.release()
         cv2.destroyAllWindows()
         res = "Images Taken for ID : " + Id
-        row = [serial, '', Id, '', name]
+
+
+        
+        flag=0
+        with open("BranchDetails\BranchDetails.csv", 'rt') as f:
+            reader = csv.reader(f, delimiter=',')
+            for row in reader:
+                if branch in row:
+                    flag=1
+                    branch=row[0]
+                    break
+        f.close()
+        print(flag)
+        if(flag==0):
+            row=[serial1,'',branch]
+            branch=serial1
+            with open('BranchDetails\BranchDetails.csv', 'a+') as csvFile:
+                writer = csv.writer(csvFile)
+                writer.writerow(row)
+            csvFile.close()
+
+        row = [serial, '', Id, '', name,'',address,'',college,'',branch]
         with open('StudentDetails\StudentDetails.csv', 'a+') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)
@@ -204,6 +262,15 @@ def TakeImages():
     else:
         if (name.isalpha() == False):
             res = "Enter Correct name"
+            message.configure(text=res)
+        if (address.isalpha() == False):
+            res = "Enter Correct address"
+            message.configure(text=res)
+        if (college.isalpha() == False):
+            res = "Enter Correct college name"
+            message.configure(text=res)
+        if (branch.isalpha() == False):
+            res = "Enter Correct branch name"
             message.configure(text=res)
 
 ########################################################################################
@@ -266,7 +333,7 @@ def TrackImages():
         mess._show(title='Data Missing', message='Please click on Save Profile to reset data!!')
         return
     harcascadePath = "haarcascade_frontalface_default.xml"
-    faceCascade = cv2.CascadeClassifier(harcascadePath);
+    faceCascade = cv2.CascadeClassifier(harcascadePath)
 
     cam = cv2.VideoCapture(0)
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -396,11 +463,26 @@ lbl2.place(x=-83, y=140)
 txt2 = tk.Entry(frame2,width=30 ,fg="black",font=('times', 15, ' bold ')  )
 txt2.place(x=50, y=173)
 
+lbl3 = tk.Label(frame2, text="Enter Address",width=30,height=1  ,fg="black"  ,bg="#00aeff" ,font=('times', 17, ' bold '))
+lbl3.place(x=-83, y=210)
+txt3 = tk.Entry(frame2,width=30 ,fg="black",font=('times', 15, ' bold ')  )
+txt3.place(x=50, y=240)
+
+lbl4 = tk.Label(frame2, text="Enter College Name",width=30,height=1  ,fg="black"  ,bg="#00aeff" ,font=('times', 17, ' bold '))
+lbl4.place(x=-53, y=280)
+txt4 = tk.Entry(frame2,width=30 ,fg="black",font=('times', 15, ' bold ')  )
+txt4.place(x=50, y=310)
+
+lbl5 = tk.Label(frame2, text="Enter Branch",width=30,height=1  ,fg="black"  ,bg="#00aeff" ,font=('times', 17, ' bold '))
+lbl5.place(x=-83, y=340)
+txt5 = tk.Entry(frame2,width=30 ,fg="black",font=('times', 15, ' bold ')  )
+txt5.place(x=50, y=370)
+
 message1 = tk.Label(frame2, text="1)Take Images  >>>  2)Save Profile" ,bg="#00aeff" ,fg="black"  ,width=39 ,height=1, activebackground = "yellow" ,font=('times', 15, ' bold '))
-message1.place(x=7, y=230)
+message1.place(x=7, y=410)
 
 message = tk.Label(frame2, text="" ,bg="#00aeff" ,fg="black"  ,width=39,height=1, activebackground = "yellow" ,font=('times', 16, ' bold '))
-message.place(x=7, y=450)
+message.place(x=7, y=540)
 
 lbl3 = tk.Label(frame1, text="Attendance",width=20  ,fg="black"  ,bg="#00aeff"  ,height=1 ,font=('times', 17, ' bold '))
 lbl3.place(x=100, y=115)
@@ -435,15 +517,23 @@ tv.heading('time',text ='TIME')
 scroll=ttk.Scrollbar(frame1,orient='vertical',command=tv.yview)
 scroll.grid(row=2,column=4,padx=(0,20),pady=(150,0),sticky='ns')
 tv.configure(yscrollcommand=scroll.set)
+
+
     #buttons
 clearButton = tk.Button(frame2, text="Clear", command=clear  ,fg="black"  ,bg="#ea2a2a"  ,width=11 ,activebackground = "white" ,font=('times', 11, ' bold '))
 clearButton.place(x=335, y=86)
 clearButton2 = tk.Button(frame2, text="Clear", command=clear2  ,fg="black"  ,bg="#ea2a2a"  ,width=11 , activebackground = "white" ,font=('times', 11, ' bold '))
 clearButton2.place(x=335, y=172)    
+clearButton3 = tk.Button(frame2, text="Clear", command=clear3  ,fg="black"  ,bg="#ea2a2a"  ,width=11 , activebackground = "white" ,font=('times', 11, ' bold '))
+clearButton3.place(x=335, y=239) 
+clearButton4 = tk.Button(frame2, text="Clear", command=clear4  ,fg="black"  ,bg="#ea2a2a"  ,width=11 , activebackground = "white" ,font=('times', 11, ' bold '))
+clearButton4.place(x=335, y=309)
+clearButton5 = tk.Button(frame2, text="Clear", command=clear5  ,fg="black"  ,bg="#ea2a2a"  ,width=11 , activebackground = "white" ,font=('times', 11, ' bold '))
+clearButton5.place(x=335, y=369)
 takeImg = tk.Button(frame2, text="Take Images", command=TakeImages  ,fg="white"  ,bg="blue"  ,width=34  ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
-takeImg.place(x=50, y=300)
+takeImg.place(x=50, y=440)
 trainImg = tk.Button(frame2, text="Save Profile", command=psw ,fg="white"  ,bg="blue"  ,width=34  ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
-trainImg.place(x=50, y=380)
+trainImg.place(x=50, y=490)
 trackImg = tk.Button(frame1, text="Take Attendance", command=TrackImages  ,fg="black"  ,bg="yellow"  ,width=35  ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
 trackImg.place(x=30,y=50)
 quitWindow = tk.Button(frame1, text="Quit", command=window.destroy  ,fg="black"  ,bg="red"  ,width=35 ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
