@@ -17,7 +17,6 @@ txt2=""
 txt3=""
 txt4=""
 txt5=""
-st=""
 message1=""
 message=""
 tv=""
@@ -38,10 +37,6 @@ def assure_path_exists(path):
 
 ##################################################################################
 
-def tick():
-    time_string = time.strftime('%H:%M:%S')
-    clock.config(text=time_string)
-    clock.after(200,tick)
 
 ###################################################################################
 
@@ -56,7 +51,7 @@ def check_haarcascadefile():
         pass
     else:
         mess._show(title='Some file missing', message='Please contact us for help')
-        st.destroy()
+        window.destroy()
 
 ###################################################################################
 master=""
@@ -230,6 +225,7 @@ def TakeImages():
             # break if the sample number is morethan 100
             elif sampleNum > 100:
                 break
+        
         cam.release()
         cv2.destroyAllWindows()
         res = "Images Taken for ID : " + Id
@@ -471,7 +467,7 @@ def TrackImages():
         mess._show(title='Details Missing', message='Students details are missing, please check!')
         cam.release()
         cv2.destroyAllWindows()
-        st.destroy()
+        window.destroy()
     attendance=[]
     while True:
         ret, im = cam.read()
@@ -517,7 +513,7 @@ def TrackImages():
         for lines in reader1:
             i = i + 1
             if (i > 1):
-                if (i % 2 != 0):
+                if (i % 2 != 0 and len(lines)>0):
                     iidd = str(lines[0]) + '   '
                     tv.insert('', 0, text=iidd, values=(str(lines[2]), str(lines[4]), str(lines[6])))
     csvFile1.close()
@@ -553,7 +549,7 @@ def TrackImages1():
         mess._show(title='Details Missing', message='Teacher details are missing, please check!')
         cam.release()
         cv2.destroyAllWindows()
-        st.destroy()
+        window.destroy()
     attendance=[]
     while True:
         ret, im = cam.read()
@@ -638,7 +634,7 @@ def change_pass():
 ##################################STUDENTS###############################
 def students():
     password = tsd.askstring('Password', 'Enter Password', show='*')
-    if(password!="admin" and password!="students" ):
+    if(password!="admin" and password!="students"):
         mess._show(title='Wrong Password', message='You are neither admin nor student')
         return
     global txt,txt2,txt3,txt4,txt5,message1,message,message3
@@ -699,6 +695,7 @@ def students():
     takeImg.place(x=50, y=440)
     trainImg = tk.Button(frame2, text="Save Profile", command=psw ,fg="white"  ,bg="blue"  ,width=34  ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
     trainImg.place(x=50, y=490)
+    print("Students Section loaded nicely")
 ##################################TEACHERS##########################################
 def teachers():
     password = tsd.askstring('Password', 'Enter Password', show='*')
@@ -763,6 +760,7 @@ def teachers():
     takeImg.place(x=50, y=440)
     trainImg = tk.Button(frame2, text="Save Profile", command=psw ,fg="white"  ,bg="blue"  ,width=34  ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
     trainImg.place(x=50, y=490)
+    print("Teachers Section loaded nicely")
 ####################################################################################
 ts = time.time()
 date = datetime.datetime.fromtimestamp(ts).strftime('%d-%m-%Y')
@@ -844,7 +842,7 @@ trainImg = tk.Button(frame2, text="Teachers", command=teachers ,fg="white"  ,bg=
 trainImg.place(x=50, y=490)
 trackImg = tk.Button(frame1, text="Take Attendance", command=TrackImages  ,fg="black"  ,bg="yellow"  ,width=35  ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
 trackImg.place(x=30,y=50)
-quitWindow = tk.Button(frame1, text="Back to Guide", command=window.destroy  ,fg="black"  ,bg="red"  ,width=35 ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
+quitWindow = tk.Button(frame1, text="Quit", command=window.destroy  ,fg="black"  ,bg="red"  ,width=35 ,height=1, activebackground = "white" ,font=('times', 15, ' bold '))
 quitWindow.place(x=50, y=450)
 
 
@@ -857,7 +855,7 @@ filemenu.add_command(label='Change Password', command = change_pass)
 filemenu.add_command(label='Contact Us', command = contact)
 filemenu.add_command(label='Exit',command = window.destroy)
 menubar.add_cascade(label='Help',font=('times', 29, ' bold '),menu=filemenu)
-
+print("Main page loaded nicely")
 ##################### END ######################################
 window.configure(menu=menubar)
 window.mainloop()
